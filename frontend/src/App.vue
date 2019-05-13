@@ -1,0 +1,30 @@
+<template>
+    <v-app>
+        <v-toolbar dark class="primary" app dense flat clipped-left>
+            <v-toolbar-title> THRIFT CHAT</v-toolbar-title>
+            <v-toolbar-items class="hidden-xs-only"></v-toolbar-items>
+        </v-toolbar>
+
+        <v-content fluid>
+            <v-container>
+            </v-container>
+        </v-content>
+    </v-app>
+</template>
+
+<script lang="ts">
+    import {Component, Vue} from "vue-property-decorator";
+
+    @Component({
+        name: "App",
+    })
+    export default class App extends Vue {
+    }
+</script>
+
+<style>
+    /* Styles here will be globally applied. */
+    html {
+        overflow-y: hidden !important;
+    }
+</style>

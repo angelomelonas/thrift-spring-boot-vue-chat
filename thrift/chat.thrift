@@ -1,9 +1,9 @@
 namespace java com.angelomelonas.thriftwebchat
 
-service Chat {
+service ChatService {
     Message sendMessage(1: MessageRequest messageRequest);
 
-    list<Message> getMessages(1: list<Message> message);
+    list<Message> getMessages();
 }
 
 struct Message {

@@ -60,6 +60,8 @@
                 <version>0.1.11</version>
                 <configuration>
                     <thriftExecutable>${project.parent.basedir}/thrift/thrift-0.12.0.exe</thriftExecutable>
+                    <thriftSourceRoot>${project.parent.basedir}/thrift</thriftSourceRoot>
+                    <generator>java</generator>
                 </configuration>
                 <executions>
                     <execution>
