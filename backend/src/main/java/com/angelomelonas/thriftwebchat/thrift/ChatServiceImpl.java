@@ -4,6 +4,8 @@ import com.angelomelonas.thriftwebchat.ChatService;
 import com.angelomelonas.thriftwebchat.Message;
 import com.angelomelonas.thriftwebchat.MessageRequest;
 import org.apache.thrift.TException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -14,11 +16,13 @@ import java.util.stream.Collectors;
 
 @Service
 public class ChatServiceImpl implements ChatService.Iface {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChatServiceImpl.class);
     private ConcurrentLinkedQueue<Message> messagesQueue = new ConcurrentLinkedQueue<>();
 
     @Override
     public Message sendMessage(MessageRequest messageRequest) throws TException {
+        LOGGER.info("Received client message: {} from user: {}", messageRequest.getMessage(), messageRequest.getUsername());
+
         Message newMessage = new Message();
 
         newMessage.setMessage(messageRequest.getMessage());
