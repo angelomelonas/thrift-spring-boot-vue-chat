@@ -7,7 +7,8 @@
     "build": "vue-cli-service build",
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "vue-cli-service lint",
-    "thrift": "mkdirp thrift && \"../thrift/thrift-0.12.0.exe\" --gen js:ts -out thrift ../thrift/chat.thrift"
+    "thrift": "mkdirp thrift && \"../thrift/thrift-0.12.0.exe\" --gen js:ts -out thrift ../thrift/chat.thrift",
+    "thrift2": "thrift-typescript --fallbackNamespace none --rootDir . --sourceDir ../thrift chat.thrift"
   },
   "repository": {
     "type": "git",
@@ -16,15 +17,25 @@
   "author": "Angelo Melonas <angelomelonas@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@types/google-protobuf": "^3.2.7",
+    "@creditkarma/thrift-client": "^0.13.6",
+    "@creditkarma/thrift-server-core": "^0.13.6",
+    "@creditkarma/thrift-server-express": "^0.13.6",
+    "@types/express": "^4.16.1",
+    "@types/request": "^2.48.1",
+    "@types/thrift": "^0.10.8",
     "core-js": "^2.6.5",
+    "express": "^4.16.4",
     "material-design-icons-iconfont": "^5.0.1",
+    "request": "^2.88.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
+    "thrift": "0.12.0",
     "vue": "^2.6.10",
     "vue-class-component": "^7.0.2",
     "vue-property-decorator": "^8.1.0",
-    "vuetify": "^1.5.14"
+    "vuetify": "^1.5.14",
+    "vuex": "^3.1.1",
+    "vuex-module-decorators": "^0.9.9"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^3.7.0",
@@ -38,7 +49,8 @@
     "eslint-plugin-vue": "^5.0.0",
     "typescript": "^3.4.3",
     "vue-template-compiler": "^2.5.21",
-    "mkdirp": "^0.5.1"
+    "mkdirp": "^0.5.1",
+    "@creditkarma/thrift-typescript": "^3.6.0"
   },
   "eslintConfig": {
     "root": true,
@@ -50,7 +62,10 @@
       "@vue/prettier",
       "@vue/typescript"
     ],
-    "rules": {},
+    "rules": {
+      "no-console": "off"
+    },
+    "eslintIgnore": "thrift/*",
     "parserOptions": {
       "parser": "@typescript-eslint/parser"
     }

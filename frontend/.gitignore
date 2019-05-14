@@ -3,6 +3,7 @@
 /node
 /thrift
 /dist
+/codegen
 
 # local env files
 .env.local
