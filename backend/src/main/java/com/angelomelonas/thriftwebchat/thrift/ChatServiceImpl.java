@@ -3,6 +3,7 @@ package com.angelomelonas.thriftwebchat.thrift;
 import com.angelomelonas.thriftwebchat.ChatService;
 import com.angelomelonas.thriftwebchat.Message;
 import com.angelomelonas.thriftwebchat.MessageRequest;
+import com.angelomelonas.thriftwebchat.MessagesRequest;
 import com.angelomelonas.thriftwebchat.SubscriptionRequest;
 import com.angelomelonas.thriftwebchat.UnsubscriptionRequest;
 import org.apache.thrift.TException;
@@ -12,32 +13,85 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Collectors;
 
 
 @Service
 public class ChatServiceImpl implements ChatService.Iface {
     private static final Logger LOGGER = LoggerFactory.getLogger(ChatServiceImpl.class);
-    private ConcurrentLinkedQueue<Message> messagesQueue = new ConcurrentLinkedQueue<>();
+
+    private ConcurrentHashMap<String, ConcurrentLinkedQueue<Message>> clientMessageQueues = new ConcurrentHashMap<>();
 
     @Override
     public Message subscribe(SubscriptionRequest subscriptionRequest) throws TException {
-        // TODO
-        return null;
+        String username = subscriptionRequest.getUsername();
+        Long timestamp = Instant.now().toEpochMilli();
+
+        if (!clientMessageQueues.containsKey(username)) {
+            Message serverSuccessMessage = new Message();
+            serverSuccessMessage.setTimestamp(timestamp);
+            serverSuccessMessage.setUsername("Server");
+            serverSuccessMessage.setMessage("Welcome to Thrift Chat, " + username + "!");
+
+            // TODO: User a token instead of the username.
+            // Create a new message queue for the client.
+            ConcurrentLinkedQueue<Message> clientQueue = new ConcurrentLinkedQueue<>();
+            // Add the client with its queue to our list.
+            clientMessageQueues.put(username, clientQueue);
+
+            LOGGER.info("Client with Username {} has subscribed.", username);
+
+            return serverSuccessMessage;
+        } else {
+            // TODO: Introduce an Error protocol buffer.
+            LOGGER.warn("Error: Username '{}' has already been taken.", username);
+
+            Message serverErrorMessage = new Message();
+            serverErrorMessage.setTimestamp(timestamp);
+            serverErrorMessage.setUsername("Server");
+            serverErrorMessage.setMessage("Error: Username '" + username + "' has already been taken.");
+
+            return serverErrorMessage;
+        }
     }
 
     @Override
     public Message unsubscribe(UnsubscriptionRequest unsubscriptionRequest) throws TException {
-        // TODO
-        return null;
+        String username = unsubscriptionRequest.getUsername();
+        Long timestamp = Instant.now().toEpochMilli();
+
+        if (clientMessageQueues.containsKey(username)) {
+
+            Message serverSuccessMessage = new Message();
+            serverSuccessMessage.setTimestamp(timestamp);
+            serverSuccessMessage.setUsername("Server");
+            serverSuccessMessage.setMessage("You have unsubscribed from gRPC Chat.");
+
+            // Remove the client and its message queue.
+            clientMessageQueues.remove(username);
+
+            LOGGER.info("Client with username {} has been unsubscribed.", username);
+            return serverSuccessMessage;
+        } else {
+            Message serverErrorMessage = new Message();
+            serverErrorMessage.setTimestamp(timestamp);
+            serverErrorMessage.setUsername("Server");
+            serverErrorMessage.setMessage("Error: Client with username " + username + " does not exist or has already unsubscribed.");
+
+            LOGGER.warn("Client with username {} does not exist or has already unsubscribed.", username);
+
+            return serverErrorMessage;
+        }
     }
 
     @CrossOrigin
     @Override
     public Message sendMessage(MessageRequest messageRequest) throws TException {
-        LOGGER.info("Received client message: {} from user: {}", messageRequest.getMessage(), messageRequest.getUsername());
+        String username = messageRequest.getUsername();
+        String message = messageRequest.getMessage();
 
         Message newMessage = new Message();
 
@@ -45,15 +99,17 @@ public class ChatServiceImpl implements ChatService.Iface {
         newMessage.setUsername(messageRequest.getUsername());
         newMessage.setTimestamp(Instant.now().getEpochSecond());
 
-        // Store the message on the server.
-        messagesQueue.add(newMessage);
+        // Add the message to each of the client's message queues.
+        clientMessageQueues.forEach((client, messageQueue) -> messageQueue.add(newMessage));
+
+        LOGGER.info("Received message: {} from user: {}", message, username);
 
         // Return the message to the client.
         return newMessage;
     }
 
     @Override
-    public List<Message> getMessages() throws TException {
-        return messagesQueue.stream().collect(Collectors.toList());
+    public List<Message> getMessages(MessagesRequest messagesRequest) throws TException {
+        return new ArrayList<>(clientMessageQueues.get(messagesRequest.getUsername()));
     }
 }

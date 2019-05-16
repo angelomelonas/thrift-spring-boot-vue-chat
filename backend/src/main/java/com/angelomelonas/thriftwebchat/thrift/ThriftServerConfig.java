@@ -29,7 +29,7 @@ public class ThriftServerConfig {
         Processor<ChatServiceImpl> chatServiceProcessor = new Processor<>(chatService);
         TServlet tServlet = new TServlet(chatServiceProcessor, protocolFactory);
 
-        LOGGER.info("Server started: {}", tServlet.getServletInfo());
+        LOGGER.info("Thrift Server started.");
         return new ServletRegistrationBean(tServlet, "/chat");
     }
 

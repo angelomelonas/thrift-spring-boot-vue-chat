@@ -8,7 +8,7 @@ service ChatService {
 
     Message sendMessage(1: MessageRequest messageRequest);
 
-    list<Message> getMessages();
+    list<Message> getMessages(MessagesRequest messagesRequest);
 }
 
 struct Message {
@@ -27,5 +27,9 @@ struct SubscriptionRequest{
 }
 
 struct UnsubscriptionRequest{
+    1: string username;
+}
+
+struct MessagesRequest{
     1: string username;
 }
