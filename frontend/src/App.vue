@@ -30,7 +30,7 @@
     export default class App extends Vue {
         created() {
             // On app creation, connect to the Thrift server.
-            chat.connectClient("localhost", 8000);
+            chat.connectClient({hostname: "localhost", port: 8000});
         }
     }
 </script>
@@ -38,6 +38,6 @@
 <style>
     /* Styles here will be globally applied. */
     html {
-        overflow-y: hidden !important;
+        /*overflow-y: hidden !important;*/
     }
 </style>

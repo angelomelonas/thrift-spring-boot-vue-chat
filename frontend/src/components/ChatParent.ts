@@ -1,7 +1,5 @@
 import {Component, Vue} from "vue-property-decorator";
 import chat from "@/store/modules/chat";
-import {ChatService} from "../../codegen";
-import {createHttpClient} from "@creditkarma/thrift-client";
 
 
 @Component

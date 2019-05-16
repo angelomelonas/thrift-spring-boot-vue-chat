@@ -2,7 +2,7 @@ import {Action, getModule, Module, Mutation, VuexModule} from "vuex-module-decor
 import store from '@/store';
 
 import {ChatService, Message, MessageRequest} from "../../../codegen";
-import {createHttpClient, createHttpConnection, HttpConnection, TBinaryProtocol, TBufferedTransport,} from 'thrift'
+import {createHttpClient, createHttpConnection, createXHRClient, createXHRConnection, HttpConnection, TBinaryProtocol, TBufferedTransport,} from 'thrift'
 
 @Module({
     namespaced: true,
@@ -11,6 +11,7 @@ import {createHttpClient, createHttpConnection, HttpConnection, TBinaryProtocol,
     dynamic: true,
 })
 class ChatModule extends VuexModule {
+    // connection!: XHRConnection;
     connection!: HttpConnection;
     chatClient!: ChatService.Client;
 
@@ -51,21 +52,18 @@ class ChatModule extends VuexModule {
     // }
 
     @Action
-    async connectClient(hostname: string, port: number) {
+    connectClient(payload: { hostname: string, port: number }) {
 
         const options = {
             transport: TBufferedTransport,
             protocol: TBinaryProtocol,
             https: false,
-            path: "/chat"
+            path: "/chat",
         };
 
-        this.connection = await createHttpConnection(hostname, port, options);
-        this.chatClient = await createHttpClient(ChatService.Client, this.connection);
+        this.connection = createHttpConnection(payload.hostname, payload.port, options);
+        this.chatClient = createHttpClient(ChatService.Client, this.connection);
 
-
-        // this.chatClient = createHttpClient(ChatService.Client, );
-        // console.log(this.chatClient.getMessages());
         console.log("Client connected.");
     }
 
@@ -106,7 +104,7 @@ class ChatModule extends VuexModule {
 
         this.chatClient.sendMessage(messageRequest).then((message: Message) => {
             console.log(message.message)
-        });
+        }).catch(err => console.log("ERROR"));
     }
 }
 
