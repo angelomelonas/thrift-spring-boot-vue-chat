@@ -14,6 +14,8 @@
                         :value="username"
                         @input="setUsername"
                         :disabled="isSubscribed"
+                        @keydown.enter.exact.prevent
+                        @keyup.enter.exact="subscribe()"
                 ></v-text-field>
             </v-flex>
 

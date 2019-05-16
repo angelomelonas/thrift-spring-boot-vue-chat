@@ -33,11 +33,11 @@ export default class ChatParent extends Vue {
     }
 
     subscribe(): void {
-        // chat.subscribe();
+        chat.subscribe();
     }
 
     unsubscribe(): void {
-        // chat.unsubscribe();
+        chat.unsubscribe();
     }
 
     setUsername(username: string) {
@@ -46,7 +46,7 @@ export default class ChatParent extends Vue {
 
     private onClose() {
         if (this.isSubscribed) {
-            // chat.unsubscribe();
+            chat.unsubscribe();
         }
     }
 }

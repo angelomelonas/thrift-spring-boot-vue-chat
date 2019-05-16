@@ -121,6 +121,14 @@ public class ChatServiceImpl implements ChatService.Iface {
 
     @Override
     public List<Message> getMessages(MessagesRequest messagesRequest) throws TException {
-        return new ArrayList<>(clientMessageQueues.get(messagesRequest.getUsername()));
+        String username = messagesRequest.getUsername();
+
+        if (clientMessageQueues.containsKey(username)) {
+            ArrayList<Message> messages = new ArrayList<>(clientMessageQueues.get(username));
+            // Clear the queue for the user.
+            clientMessageQueues.get(messagesRequest.getUsername()).clear();
+            return new ArrayList<>(messages);
+        }
+        return new ArrayList<>();
     }
 }
