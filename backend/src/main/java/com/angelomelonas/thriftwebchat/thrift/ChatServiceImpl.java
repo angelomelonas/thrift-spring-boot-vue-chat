@@ -47,12 +47,12 @@ public class ChatServiceImpl implements ChatService.Iface {
             return serverSuccessMessage;
         } else {
             // TODO: Introduce an Error protocol buffer.
-            LOGGER.warn("Error: Username '{}' has already been taken.", username);
-
             Message serverErrorMessage = new Message();
             serverErrorMessage.setTimestamp(timestamp);
             serverErrorMessage.setUsername("Server");
             serverErrorMessage.setMessage("Error: Username '" + username + "' has already been taken.");
+
+            LOGGER.warn("Error: Username '{}' has already been taken.", username);
 
             return serverErrorMessage;
         }
@@ -68,7 +68,7 @@ public class ChatServiceImpl implements ChatService.Iface {
             Message serverSuccessMessage = new Message();
             serverSuccessMessage.setTimestamp(timestamp);
             serverSuccessMessage.setUsername("Server");
-            serverSuccessMessage.setMessage("You have unsubscribed from gRPC Chat.");
+            serverSuccessMessage.setMessage("You have unsubscribed from Thrift Chat.");
 
             // Remove the client and its message queue.
             clientMessageQueues.remove(username);
@@ -92,20 +92,31 @@ public class ChatServiceImpl implements ChatService.Iface {
     public Message sendMessage(MessageRequest messageRequest) throws TException {
         String username = messageRequest.getUsername();
         String message = messageRequest.getMessage();
+        Long timestamp = Instant.now().toEpochMilli();
 
-        Message newMessage = new Message();
+        if (clientMessageQueues.containsKey(username)) {
+            Message newMessage = new Message();
+            newMessage.setMessage(messageRequest.getMessage());
+            newMessage.setUsername(messageRequest.getUsername());
+            newMessage.setTimestamp(timestamp);
 
-        newMessage.setMessage(messageRequest.getMessage());
-        newMessage.setUsername(messageRequest.getUsername());
-        newMessage.setTimestamp(Instant.now().getEpochSecond());
+            // Add the message to each of the client's message queues.
+            clientMessageQueues.forEach((client, messageQueue) -> messageQueue.add(newMessage));
 
-        // Add the message to each of the client's message queues.
-        clientMessageQueues.forEach((client, messageQueue) -> messageQueue.add(newMessage));
+            LOGGER.info("Received message: {} from user: {}", message, username);
 
-        LOGGER.info("Received message: {} from user: {}", message, username);
+            // Return the message to the client.
+            return newMessage;
+        } else {
+            Message serverErrorMessage = new Message();
+            serverErrorMessage.setTimestamp(timestamp);
+            serverErrorMessage.setUsername("Server");
+            serverErrorMessage.setMessage("Error: Client with username " + username + " does not exist or has already unsubscribed.");
 
-        // Return the message to the client.
-        return newMessage;
+            LOGGER.info("User with username: {} is not subscribed.", username);
+
+            return serverErrorMessage;
+        }
     }
 
     @Override
