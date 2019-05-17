@@ -3,7 +3,7 @@
 ## Project setup
 ```
 npm install         
-npm run protoc      # Generates gRPC-Web Protocol Bufffers
+npm run thrift      # Generates TypeScript Thrift files
 ```
 
 ### Compiles and hot-reloads for development
