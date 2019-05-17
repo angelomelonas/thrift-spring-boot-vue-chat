@@ -10,15 +10,17 @@ A very simple chat application using Spring Boot, Vue.js (in TypeScript) and Apa
 4. Copy the downloaded file add it to the `${project.root}/thrift` directory.
 5. Configure the `${backend}/pom.xml` to point to the correct Thrift release (e.g., `thrift-0.12.0.exe`)
 
-
 ## Install and Run
 
 ##### Thrift Chat
-Run `mvn clean install` to build and compile the project. This will also generate all the necessary Thrift file source code for the backend.
+Run `mvn clean install -U` to build and compile the project. This will also generate all the necessary Thrift file source code for the backend and frontend.
 
 #### Spring Boot Backend
-Simply run the `ChatApplication.java` as a normal Java application. This will start the server. See the `resources/application.properties` file for server details.
+Simply run the `ChatApplication.java` as a normal Java application. This will start the server. See the `resources/application.properties` file for server details. By default it runs on http://localhost:8000.
 
 #### Vue Frontend
 
-// TODO: Generate the Thrift files for the frontend using
+##### Compiles and hot-reloads for development
+```
+npm run serve -- --port 8082
+```

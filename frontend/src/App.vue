@@ -1,7 +1,7 @@
 <template>
     <v-app>
         <v-toolbar dark class="primary" app dense flat clipped-left>
-            <v-toolbar-title> gRPC CHAT</v-toolbar-title>
+            <v-toolbar-title> THRIFT CHAT</v-toolbar-title>
             <v-toolbar-items class="hidden-xs-only"></v-toolbar-items>
         </v-toolbar>
 
@@ -38,6 +38,6 @@
 <style>
     /* Styles here will be globally applied. */
     html {
-        /*overflow-y: hidden !important;*/
+        overflow-y: hidden !important;
     }
 </style>
