@@ -20,6 +20,7 @@
     "core-js": "^2.6.5",
     "express": "^4.16.4",
     "material-design-icons-iconfont": "^5.0.1",
+    "moment": "^2.24.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "thrift": "0.12.0",
