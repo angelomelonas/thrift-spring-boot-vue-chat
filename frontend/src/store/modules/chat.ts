@@ -67,7 +67,7 @@ class ChatModule extends VuexModule {
       this.messages +=
         "[" +
         moment(
-          message.timestamp ? message.timestamp.toString() : moment()
+          message.timestamp ? message.timestamp.valueOf() : moment()
         ).format("LTS") +
         "] " +
         message.username +
